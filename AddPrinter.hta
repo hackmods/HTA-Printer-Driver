@@ -1,0 +1,208 @@
+<!doctype html>
+    <head>
+        <meta charset="utf-8">
+		
+        <title>Add Library Printers</title>
+        <meta name="description" content="Add Library Printers">
+		
+	<SCRIPT Language="VBScript" type="text/vbscript" id="WindowResize">
+		Const WINDOW_WIDTH = 600
+		Const WINDOW_HEIGHT = 500
+		window.offscreenBuffering = TRUE
+
+		window.resizeTo WINDOW_WIDTH,WINDOW_HEIGHT
+		window.moveTo (window.screen.width - WINDOW_WIDTH) / 2, (window.screen.height - WINDOW_HEIGHT) / 2
+	</SCRIPT>
+	
+	<HTA:APPLICATION
+	APPLICATIONNAME="Add Printers"
+	BORDER="thin"
+	SCROLL="no"
+	SINGLEINSTANCE="yes"
+	WINDOWSTATE="normal"
+	>
+	
+	<style>
+		body{
+		margin:0;
+		padding:0;
+		}
+		.center {
+		text-align:center; 
+		}
+		.left  {text-align:left;}
+		.right {text-align:right;}
+		.clear {clear:both}
+		
+		.bold{font-weight:600;}
+		
+		.bgBlue {
+		  background-color:#0073CF; 
+		  color:#FFF;
+		  }
+		  
+		 .bottomBorder {
+		  border-color:black; 
+		  border-bottom-style:solid;
+		 }
+		 
+		 .topBorder 
+		  border-color:black; 
+		  border-top-style:solid;
+		 }
+		  
+		.logo{width: 60%;}
+		
+		body {background-color: #FFF;}
+		
+		.w50 {
+		width:270px;
+		 border-color:black; 
+		  border-bottom-style:solid;
+		  color:#FFF;
+		background-color:#0073CF; 
+		height:185px;
+		padding:10px;}
+		
+		.widthT {width:100px;}
+		.widthD {width:150px;}
+		
+		.floatL {
+		  float:left;
+		}
+		.floatR {float:right;}
+		
+	</style>
+
+	
+    </head>
+    <body>
+	<div ID="Install"><h3>Installing Printer(s)..... Please be patient!</h3></div>
+	<div id="theRest">
+		
+			<div class="bottomBorder">
+			<img alt="Niagara College's Library Logo" class="logo" src="https://niagaracollegelibrary.files.wordpress.com/2011/04/logo-21.jpg">
+			</div>
+			
+			<div class="bgBlue">
+				<div class="w50 floatL clear">
+					<h4>1) Choose Library Printers to Install</h4>
+					<input type="checkbox" name="LibraryBlack"> Library Black Printer<br>
+					<input type="checkbox" name="LibraryColour"> Library Colour Printer<br>
+					<input type="checkbox" name="LibraryHP"> LibraryHP 11x17<br>
+					<br>
+					<h4>2) Choose Default Printer</h4>
+						<select size="1" name="DefaultPrinter" class="widthD">
+							<option value="LibraryBlack">Library Black</option>
+							<option value="LibraryColour">Library Colour</option>
+							<option value="LibraryHP">LibraryHP 11x17</option>
+						</select>
+				</div>
+				
+				<div class="w50 floatR">
+					<h4>3) Authorize Your Account</h4>
+					<P>Enter your <span class="bold">BlackBoard</span> login:</P>		
+					<P>Username: <INPUT TYPE="TEXT" class="widthT" NAME="usernamebox"></P>
+					<P>Password: <INPUT TYPE="PASSWORD" class="widthT" NAME="passwordbox"></P>
+				</div>
+			</div>
+			
+			<div class="center topBorder">
+			&nbsp;
+			<br>
+			<br>
+				<INPUT TYPE="BUTTON" NAME="SUBMIT" VALUE="Install Library Printer(s)">
+				<INPUT TYPE="BUTTON" NAME="DELPRINTERS" VALUE="Delete Library Printers">
+			</div>	
+			
+		</div>
+			
+			
+			<SCRIPT LANGUAGE="VBScript">
+
+		set objShell=CreateObject("WScript.Shell")
+		strCommand="ping -n 1 wcprt03.local.niagarac.on.ca"
+		set objProc=objShell.Exec(strCommand)
+
+		Do    
+		 line = objProc.StdOut.ReadLine()
+		 s = s & line & vbcrlf
+		Loop While Not objProc.Stdout.atEndOfStream
+
+		If InStr(s,"Reply from")=0 Then
+			'*Not connected to NC Network
+			MsgBox "You must be connected to the College's Wired or Wireless Networks (AirNC-Secure) to add printers.  Please connect and run the program again", vbExclamation, "Error"
+			window.close()
+		Else
+			'Connected to NC Network (all is good)
+		End if 
+
+		Sub Window_Onload
+			Install.Style.Visibility="hidden"
+			usernamebox.Focus
+		End Sub
+
+		Sub passwordbox_OnKeyDown
+			With document.parentWindow.event
+				If .keycode = 13 Then
+					Submit_onClick
+				End If
+			End With
+		End Sub
+
+		' Passing creds to variables to include NC\ and add printers via checkboxes
+		Sub Submit_onClick
+			sUserName = usernamebox.Value
+			sPassword = passwordbox.Value
+			
+			If sUserName = "" Or sPassword = "" Then
+				MsgBox "You must enter a username and password.  Please re-open the program and try again.", vbExclamation, "Error"
+				window.close()
+			Else
+				sFullUsername = "nc\" & sUserName	
+			
+				theRest.Style.Visibility="hidden"
+				Install.Style.Visibility="visible"
+			
+				set objShell = CreateObject("WScript.Shell")
+					Return = objShell.Run("cmdkey /add:wcprt03.local.niagarac.on.ca /user:" & sFullUsername & " /pass:" & sPassword, 1, True)
+				Set objNetwork = CreateObject("WScript.Network")
+			
+				If LibraryBlack.Checked = FALSE And LibraryColour.Checked = FALSE And LibraryHP.Checked = FALSE  Then
+					MsgBox "You must select at least one printer to install.  Please re-open the progam and try again.", vbExclamation, "Error"
+				Else
+					If LibraryBlack.Checked Then
+						objNetwork.AddWindowsPrinterConnection "\\wcprt03.local.niagarac.on.ca\LibraryBlack"
+					End If
+			
+					If LibraryColour.Checked Then
+						objNetwork.AddWindowsPrinterConnection "\\wcprt03.local.niagarac.on.ca\LibraryColour"
+					End If
+			
+					If LibraryHP.Checked Then
+						objNetwork.AddWindowsPrinterConnection "\\wcprt03.local.niagarac.on.ca\LibraryHP"
+					End If
+			
+				
+			
+					Set SelOpt = DefaultPrinter.Options(DefaultPrinter.selectedIndex)
+
+					objNetwork.SetDefaultPrinter "\\wcprt03.local.niagarac.on.ca\" & SelOpt.Value
+					MsgBox "Printer added successfully. Quitting Application.", vbInformation, "Success"
+					computerSleep(1)
+			
+					window.close()
+				End If
+			End If
+		End Sub
+
+		Sub computerSleep(seconds)
+			Set objShell = CreateObject("Wscript.Shell")
+			cmd = "%COMSPEC% /c ping -n " & 1 + seconds & " 127.0.0.1>nul"
+			objShell.Run cmd,0,1
+		End Sub
+
+		</SCRIPT>
+			
+    </body>
+</html>
