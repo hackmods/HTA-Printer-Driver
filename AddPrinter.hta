@@ -23,90 +23,170 @@
 	>
 	 
 	<style>
-		body{
-		margin:0;
-		padding:0;
-		}
-		.center {
-		text-align:center; 
-		}
+/* 
+http://meyerweb.com/eric/tools/css/reset/ 
+v2.0 | 20110126
+License: none (public domain)
+*/
+/* RESET CSS BEGIN */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* END RESET CSS END */
+
+/* BEGIN CSS STYLE BEGIN */
+
+/* TEXT STYLE */
+		h1 {
+			position: Fixed;
+			font-family:;
+			padding-left 2%;
+			padding-top 20px;
+			font-size: 400%;
+			}
+		h2 {
+			position: Fixed;
+			font-family:;
+			font-size: 200%;
+			text-algin: right;
+			margin-top: 11%;
+			margin-left: 20%;
+			}
+		h4 {
+			font-family:"Georgia,serif";
+			letter-spacing: 1px;
+			padding-bottom: 7px;
+			}
+		.center {text-align:center;}
 		.left  {text-align:left;}
 		.right {text-align:right;}
-		.clear {clear:both}
-		
 		.bold{font-weight:600;}
-		
+/* BACKGROUND STYLE */
+		.logo{
+			position: relative;
+			width: 20%;
+			margin-left: 1%;
+			margin-top: 1%;
+			margin-bottom: 1%
+			}
 		.bgBlue {
 		  background-color:#0073CF; 
 		  color:#FFF;
 		  }
-		  
-		 .bottomBorder {
-		  border-color:black; 
-		  border-bottom-style:solid;
-		 }
-		 
 		 .topBorder 
 		  border-color:black; 
 		  border-top-style:solid;
 		 }
-		  
-		.logo{width: 60%;}
-		
 		body {background-color: #FFF;}
-		
-		.w50 {
-		width:270px;
-		 border-color:black; 
-		  border-bottom-style:solid;
-		  color:#FFF;
-		background-color:#0073CF; 
-		height:185px;
-		padding:10px;}
-		
-		.widthT {width:100px;}
-		.widthD {width:150px;}
-		
-		.floatL {
-		  float:left;
+/* WRAPPER STYLE */
+        .wrapper {
+			width: 100%;
+			position: relative;
+			border-width: 7px;
+			border-color: black;
+			border-bottom-style: solid;
+			border-top-style: solid;
+			padding-top: 5%;
+			padding-bottom: 5%;
+			}
+		.leftcolumn {
+			float:left;
+			width: 50%
+			position: fixed;
+			}
+		.rightcolumn {
+			float:right;
+			width: 50%;
+			}
+/* Margins */
+		.leftmargin1 {
+			margin-left: 1%;
+			}
+		.leftpad52 {
+			padding-left: 52%}
+		.toppad10 {
+			padding-top: 1%
 		}
-		.floatR {float:right;}
-		
 	</style>
 
 	
     </head>
     <body>
-	<div ID="Install"><h3>Installing Printer(s)..... Please be patient!</h3></div>
-	<div id="theRest">
-		
-			<div class="bottomBorder">
-			<img alt="Niagara College's Library Logo" class="logo" src="https://niagaracollegelibrary.files.wordpress.com/2011/04/logo-21.jpg">
+
+		</div>
+		<div id="theRest">	
+			<div>
+				<img alt="Niagara College's Library Logo" class="logo" src="http://www.niagaracollege.ca/virtualtour/assets/NC_Button.png">
+				<h1>Libraries</h1>
+				<h2>Printer Wizard</h2>
 			</div>
-			
-			<div class="bgBlue">
-				<div class="w50 floatL clear">
-					<h4>1) Choose Library Printers to Install</h4>
-					<input type="checkbox" name="LibraryBlack"> Library Black Printer<br>
-					<input type="checkbox" name="LibraryColour"> Library Colour Printer<br>
-					<input type="checkbox" name="LibraryHP"> LibraryHP 11x17<br>
+			<div class="wrapper bgBlue">
+				<div class="leftcolumn">
+					<div class="leftmargin1">
+						<h4>1) Choose Printer to Install</h4>
+						<input type="checkbox" name="LibraryBlack"> Library Black Printer<br>
+						<input type="checkbox" name="LibraryColour"> Library Colour Printer<br>
+						<input type="checkbox" name="LibraryHP"> LibraryHP 11x17<br>
+					</div>
 					<br>
-					<h4>2) Choose Default Printer</h4>
-						<select size="1" name="DefaultPrinter" class="widthD">
-							<option value="LibraryBlack">Library Black</option>
-							<option value="LibraryColour">Library Colour</option>
-							<option value="LibraryHP">LibraryHP 11x17</option>
-						</select>
+					<div class="leftmargin1">
+						<h4>2) Choose Default Printer</h4>
+							<select size="1" name="DefaultPrinter" class="widthD">
+								<p><option value="LibraryBlack">Library Black</option>
+								<option value="LibraryColour">Library Colour</option>
+								<option value="LibraryHP">LibraryHP 11x17</option></p>
+							</select>
+					</div>
 				</div>
-				
-				<div class="w50 floatR">
-					<h4>3) Authorize Your Account</h4>
-					<P>Enter your <span class="bold">BlackBoard</span> login:</P>		
-					<P>Username: <INPUT TYPE="TEXT" class="widthT" NAME="usernamebox"></P>
-					<P>Password: <INPUT TYPE="PASSWORD" class="widthT" NAME="passwordbox"></P>
+				<div class="rightclumn">
+					<div class="leftpad52">
+						<h4>3) Authorize Your Account</h4>
+						<P>Enter your <span class="bold">BlackBoard</span> login:</P>		
+						<P>Username: <INPUT TYPE="TEXT" class="widthT" NAME="usernamebox"></P>
+						<P>Password: <INPUT TYPE="PASSWORD" class="widthT" NAME="passwordbox"></P>
+					</div>
 				</div>
 			</div>
-			
 			<div class="center topBorder">
 			&nbsp;
 			<br>
@@ -121,7 +201,8 @@
 			<SCRIPT LANGUAGE="VBScript">
 
 		set objShell=CreateObject("WScript.Shell")
-		strCommand="ping -n 1 wcprt03.local.niagarac.on.ca"
+		strCommand="ping -n 1 127.0.0.1"
+		'* strCommand="ping -n 1 wcprt03.local.niagarac.on.ca"
 		set objProc=objShell.Exec(strCommand)
 
 		Do    
@@ -183,8 +264,6 @@
 						objNetwork.AddWindowsPrinterConnection "\\wcprt03.local.niagarac.on.ca\LibraryHP"
 					End If
 			
-				
-			
 					Set SelOpt = DefaultPrinter.Options(DefaultPrinter.selectedIndex)
 
 					objNetwork.SetDefaultPrinter "\\wcprt03.local.niagarac.on.ca\" & SelOpt.Value
@@ -203,6 +282,9 @@
 		End Sub
 
 		</SCRIPT>
-			
+		<div ID="Install">
+			<h3>
+				Installing Printer(s)..... Please be patient!
+			</h3>
     </body>
 </html>
