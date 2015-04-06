@@ -1,5 +1,5 @@
 <convert2exe>
-    <path>C:\Users\Brad\Documents\GitHub\HTA-Printer-Driver\AddPrinter.exe</path>
+    <path>C:\Users\bgillap\Documents\GitHub\HTA-Printer-Driver\AddPrinter.exe</path>
     <uacLevel>asInvoker</uacLevel>
     <dependencies>
         <dependency>addprinter.ico</dependency>
