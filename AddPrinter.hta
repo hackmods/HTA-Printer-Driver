@@ -5,10 +5,12 @@
         <title>Add Library Printers</title>
         
         <meta name="description" content="Add Library Printers">
-	
+
+
+
 	<SCRIPT Language="VBScript" type="text/vbscript" id="WindowResize">
-		Const WINDOW_WIDTH = 600
-		Const WINDOW_HEIGHT = 500
+		Const WINDOW_WIDTH = 700
+		Const WINDOW_HEIGHT = 600
 		window.offscreenBuffering = TRUE
 		window.resizeTo WINDOW_WIDTH,WINDOW_HEIGHT
 		window.moveTo (window.screen.width - WINDOW_WIDTH) / 2, (window.screen.height - WINDOW_HEIGHT) / 2
@@ -18,12 +20,10 @@
   APPLICATIONNAME="NC Add Printers Wizard"
   VERSION="1.0"
   BORDER="dialog"
-  MAXIMIZEBUTTON="no"
   ICON="addprinter.ico"
-  SCROLL="no"
+  SCROLL="auto"
+  SCROLLFLAT="yes"
   SINGLEINSTANCE="yes"/>
-  
-  
 	<SCRIPT LANGUAGE="VBScript">
 '*****************************************************************
 'Define Variables for campus, server path, rooms, printer names
@@ -77,6 +77,15 @@ prntwellib2="LibraryHP"
 '**************************************************************************************
 		Sub Window_Onload
 			HiddenInstallMessage.Style.Visibility="hidden" ' Hide the installing wait message
+'***************************
+' Hide Comboboxes On Start
+'***************************
+			WELLANDrooms.Style.Display="none" ' Hide drop downs on load
+			NOTLrooms.Style.Display="none" ' Hide drop downs on load
+'***************************
+' Hide Rooms On Start
+'***************************
+			WELLANDlibrary.Style.Display="none" '
 			usernamebox.Focus ' Set the username box to the cursor immediately
 		End Sub
 '*********************************************
@@ -85,19 +94,33 @@ prntwellib2="LibraryHP"
 
 ' Show/Hide Buttons based on Room
 	Sub selcampus
-		If OptionChooser.Value = 0 Then
-			NOTLprinters.Style.Display = "none"
-			WELLANDprinters.Style.Display = "none"
-		ElseIf OptionChooser.Value = 1 Then
-			NOTLprinters.Style.Display = "inline"
-			WELLANDprinters.Style.Display="none"
-		ElseIf OptionChooser.Value = 2 Then
-			WELLANDprinters.Style.Display = "inline"
-			NOTLprinters.Style.Display = "none"
+		If OptionCampus.Value = 0 Then
+			NOTLrooms.Style.Display = "none"
+			WELLANDrooms.Style.Display = "none"
+		ElseIf OptionCampus.Value = 1 Then
+			NOTLrooms.Style.Display = "inline"
+			WELLANDrooms.Style.Display="none"
+		ElseIf OptionCampus.Value = 2 Then
+			WELLANDrooms.Style.Display = "inline"
+			NOTLrooms.Style.Display = "none"
 		Else
-			NOTLprinters.Style.Display="none"
-			WELLANDprinters.Style.Display="none"
+			NOTLrooms.Style.Display="none"
+			WELLANDrooms.Style.Display="none"
 		End If
+	End Sub
+
+	Sub selroomwel
+		If OptionRoomWEL.Value = 0 Then
+			WELLANDlibrary.Style.Display = "none"
+		ElseIf OptionRoomWEL.Value = 1 Then
+			WELLANDlibrary.Style.Display = "inline"
+		Else
+			WELLANDlibrary.Style.Display="none"
+		End If
+	End Sub
+	
+	Sub selroomnotl
+	
 	End Sub
 
 '**********************************************
@@ -225,8 +248,23 @@ table {
 }
 /* END RESET CSS END */
 
+
 /* BEGIN CSS STYLE BEGIN */
 
+/* FORM STYLE */
+
+		.widthTextBox {
+			width: 40%;
+			}
+select
+{
+width: 35%;
+border-radius: 0px;
+border: 1px solid #CCC;
+font-weight: 200;
+font-family: Verdana;
+box-shadow: 1px 1px 5px #CCC;
+}
 /* TEXT STYLE */
 		h1 {
 			position: Fixed;
@@ -248,6 +286,7 @@ table {
 			letter-spacing: 1px;
 			padding-bottom: 7px;
 			}
+
 		.center {text-align:center;}
 		.left  {text-align:left;}
 		.right {text-align:right;}
@@ -293,11 +332,15 @@ table {
 		.leftmargin1 {
 			margin-left: 1%;
 			}
+		.leftmargin2 {
+			margin-left: 2%;
+			}
 		.leftpad52 {
 			padding-left: 52%}
 		.toppad10 {
 			padding-top: 1%
 		}
+		
 		</style>
 
 	
@@ -314,40 +357,57 @@ table {
 			</div>
 			<div class="wrapper bgBlue">
 				<div class="leftcolumn">
+<!-- CAMPUS DROPDWON -->
 					<div class="leftmargin1">
 						<h4>1) Choose your Campus.</h4>
-						<select size="1" name="OptionChooser" onChange="selcampus">
+						<select size="1" name="OptionCampus" onChange="selcampus" class="leftmargin1">
     						<option value="0">Choose Campus</option>
     						<option value="1">Niagara on the Lake</option>
     						<option value="2">Welland</option>
 						</select>
 					</div>
 					<br>
-					<div ID="WELLANDprinters" class="leftmargin1">
-						<h4>2) Choose Printer to Install</h4>
+<!-- WELLAND ROOMS DROPDOWN -->
+					<div ID="WELLANDrooms">
+						<h4 class="leftmargin1">2) Choose your Room</h4>
+						<select size="1" name="OptionRoomWEL" onChange="selroomwel" class="leftmargin2">
+							<option value="0">Choose Room</option>
+							<option value="1">Library</option>
+						</select>
+					</div>
+					<div ID="NOTLrooms" class="leftmargin1">
+						<h4 class="leftmargin1">2) Choose your Room</h4>
+						<select size="1" name="OptionRoomNOTL" onChange="selroomnotl" class="leftmargin2">
+							<option value="0">Choose Room</option>
+							<option value="1">Library</option>
+						</select>
+					</div>
+                    <br>
+<!-- WELLAND Library Printers -->
+
+					<div ID="WELLANDlibrary" >
+					<br>
+						<h4 class="leftmargin1">3) Choose your Printer(s)</h4>
 						<input type="checkbox" name="LibraryBlack"> Library Black Printer<br>
 						<input type="checkbox" name="LibraryColour"> Library Colour Printer<br>
-						<input type="checkbox" name="LibraryHP"> LibraryHP 11x17<br>
-					</div>
-					<div ID="NOTLprinters" >
-					I AM THE GREATEST!!!
-					</div>
-					<br>
-					<div class="leftmargin1">
-						<h4>3) Choose Default Printer</h4>
-							<select size="1" name="DefaultPrinter" class="widthD">
-								<p><option value="LibraryBlack">Library Black</option>
+						<input type="checkbox" name="LibraryHP"> LibraryHP 11x17
+					</div>				
+
+				</div>
+<!-- RIGHT SIDE --> 
+
+				<div>
+					<div class="leftpad52">
+						<h4>3) Enter your <span class="bold">BlackBoard</span> login:</h4>	
+						<P class="bold">Username: <INPUT TYPE="TEXT" class="widthTextBox" NAME="usernamebox"></P>
+						<P class="bold">Password:&nbsp; <INPUT TYPE="PASSWORD" class="widthTextBox" NAME="passwordbox"></P>
+						<br>
+						<h4>4) Choose Default Printer</h4>
+							<select size="1" name="DefaultPrinter">
+								<option value="LibraryBlack">Library Black</option>
 								<option value="LibraryColour">Library Colour</option>
 								<option value="LibraryHP">LibraryHP 11x17</option></p>
 							</select>
-					</div>
-				</div>
-				<div class="rightclumn">
-					<div class="leftpad52">
-						<h4>4) Authorize Your Account</h4>
-						<P>Enter your <span class="bold">BlackBoard</span> login:</P>		
-						<P>Username: <INPUT TYPE="TEXT" class="widthT" NAME="usernamebox"></P>
-						<P>Password: <INPUT TYPE="PASSWORD" class="widthT" NAME="passwordbox"></P>
 					</div>
 				</div>
 			</div>
