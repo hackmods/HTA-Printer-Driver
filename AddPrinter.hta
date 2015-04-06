@@ -86,17 +86,17 @@ prntwellib2="LibraryHP"
 ' Show/Hide Buttons based on Room
 	Sub selcampus
 		If OptionChooser.Value = 0 Then
-			NOTLprinters.Style.Visibility="hidden"
-			WELLANDprinters.Style.Visibility="hidden"
+			NOTLprinters.Style.Display = "none"
+			WELLANDprinters.Style.Display = "none"
 		ElseIf OptionChooser.Value = 1 Then
-			NOTLprinters.Style.Visibility="visible"
-			WELLANDprinters.Style.Visibility="hidden"
+			NOTLprinters.Style.Display = "inline"
+			WELLANDprinters.Style.Display="none"
 		ElseIf OptionChooser.Value = 2 Then
-			WELLANDprinters.Style.Visibility="visible"
-			NOTLprinters.Style.Visibility="hidden"
+			WELLANDprinters.Style.Display = "inline"
+			NOTLprinters.Style.Display = "none"
 		Else
-			NOTLprinters.Style.Visibility="hidden"
-			WELLANDprinters.Style.Visibility="hidden"
+			NOTLprinters.Style.Display="none"
+			WELLANDprinters.Style.Display="none"
 		End If
 	End Sub
 
@@ -330,7 +330,7 @@ table {
 						<input type="checkbox" name="LibraryHP"> LibraryHP 11x17<br>
 					</div>
 					<div ID="NOTLprinters" >
-					working?
+					I AM THE GREATEST!!!
 					</div>
 					<br>
 					<div class="leftmargin1">
