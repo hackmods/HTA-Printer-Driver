@@ -203,12 +203,32 @@ table {
 			
 			
 			<SCRIPT LANGUAGE="VBScript">
+'*****************************************************************
+'Define Variables for campus, server path, rooms, printer names
+'*****************************************************************
+
+Dim wellandUNCpath
+wellandUNCpath="\\wcprt03.local.niagarac.on.ca\"
+
+'Printer Names, Define printers for rooms here.
+' abbreviation prnt denotes printer
+' lib denotes room
+' wel denotes campus
+Dim prntlibwel1
+prntlibwel1="LibraryBlack"
+Dim prntlibwel2
+prntlibwel2="LibraryColour"
+Dim prntlibwel3
+prntlibwel3="LibraryHP"
 
 
+'***************************************************************
 'Begin network test to make sure user is on the correct domain.
+'***************************************************************
+
 		set objShell=CreateObject("WScript.Shell")
 		strCommand="ping -n 1 127.0.0.1"
-		'* strCommand="ping -n 1 wcprt03.local.niagarac.on.ca" commented out to disable NC test for now.
+	    'strCommand="ping -n 1 wcprt03.local.niagarac.on.ca" TEMPORARILY DISABLED WHILE TESTING. TURN ON FOR PRODUCTION
 		set objProc=objShell.Exec(strCommand)
 
 		Do    
@@ -223,13 +243,14 @@ table {
 		Else
 			'Connected to NC Network (all is good)
 		End if 
-'End network Test and begin loading the UI. Set the mouse focus to the username field.
+'**************************************************************************************
+'End network Test and begin loading the UI.
+'**************************************************************************************
 		Sub Window_Onload
-		
-' Not sure what teh visibility style is doing here.
-			Install.Style.Visibility="hidden"
-			usernamebox.Focus
+			HiddenInstallMessage.Style.Visibility="hidden" ' Hide the installing wait message
+			usernamebox.Focus ' Set the username box to the cursor immediately
 		End Sub
+
 ' Keycode 13 is for the enter key.
 		Sub passwordbox_OnKeyDown
 			With document.parentWindow.event
@@ -249,10 +270,16 @@ table {
 				Location.Reload(True)
 			Else
 				sFullUsername = "nc\" & sUserName	
-' This hides the window contents and shows activity. We can probably do better with a scrollbar or something here.
-' 			
-				theRest.Style.Visibility="hidden"
-				Install.Style.Visibility="visible"
+				
+
+' ********************************************************************************************************************
+' DEPRICATED INSTALL MESSAGE
+' This hides the window contents and shows activity. We can probably do better with a scrollbar or something here. 			
+'				theRest.Style.Visibility="hidden"
+'				Install.Style.Visibility="visible"
+'*********************************************************************************************************************
+
+
 ' Change cmdkey add value into a variable for campus awareness		
 				set objShell = CreateObject("WScript.Shell")
 					Return = objShell.Run("cmdkey /add:wcprt03.local.niagarac.on.ca /user:" & sFullUsername & " /pass:" & sPassword, 1, True)
@@ -262,19 +289,20 @@ table {
 					MsgBox "You must select at least one printer to install.  Please re-open the progam and try again.", vbExclamation, "Error"
 				Else
 					If LibraryBlack.Checked Then
-						objNetwork.AddWindowsPrinterConnection "\\wcprt03.local.niagarac.on.ca\LibraryBlack"
+						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntlibwel1
 					End If
 			
 					If LibraryColour.Checked Then
-						objNetwork.AddWindowsPrinterConnection "\\wcprt03.local.niagarac.on.ca\LibraryColour"
+						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntlibwel2
 					End If
 			
 					If LibraryHP.Checked Then
-						objNetwork.AddWindowsPrinterConnection "\\wcprt03.local.niagarac.on.ca\LibraryHP"
+						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntlibwel3
 					End If
-' Set default printer		
+'*******************************************************
+' Set default printer 
+'*******************************************************
 					Set SelOpt = DefaultPrinter.Options(DefaultPrinter.selectedIndex)
-
 					objNetwork.SetDefaultPrinter "\\wcprt03.local.niagarac.on.ca\" & SelOpt.Value
 					MsgBox "Printer added successfully. Quitting Application.", vbInformation, "Success"
 					computerSleep(1)
@@ -291,7 +319,7 @@ table {
 		End Sub
 ' Instead of hiding everything in the window and showing this message maybe we could hide a message at the bottom of the window and show it on top of the ui as an inverse.
 		</SCRIPT>
-		<div ID="Install">
+		<div ID="HiddenInstallMessage" class="center toppad10">
 			<h3>
 				Installing Printer(s)..... Please be patient!
 			</h3>
