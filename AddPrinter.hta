@@ -210,16 +210,23 @@ table {
 Dim wellandUNCpath
 wellandUNCpath="\\wcprt03.local.niagarac.on.ca\"
 
+Dim notlUNCpath
+notlUNCpath="\\gcprt02.local.niagarac.on.ca\"
+
 'Printer Names, Define printers for rooms here.
 ' abbreviation prnt denotes printer
 ' lib denotes room
 ' wel denotes campus
-Dim prntlibwel1
-prntlibwel1="LibraryBlack"
-Dim prntlibwel2
-prntlibwel2="LibraryColour"
-Dim prntlibwel3
-prntlibwel3="LibraryHP"
+
+' Should be a variable array but I can't get it to work. See http://www.w3schools.com/vbscript/vbscript_variables.asp
+
+'Welland Library Printers
+Dim prntwellib0
+prntwellib0="LibraryBlack"
+Dim prntwellib1
+prntwellib1="LibraryColour"
+Dim prntwellib2
+prntwellib2="LibraryHP"
 
 
 '***************************************************************
@@ -289,15 +296,15 @@ prntlibwel3="LibraryHP"
 					MsgBox "You must select at least one printer to install.  Please re-open the progam and try again.", vbExclamation, "Error"
 				Else
 					If LibraryBlack.Checked Then
-						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntlibwel1
+						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib0
 					End If
 			
 					If LibraryColour.Checked Then
-						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntlibwel2
+						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib1
 					End If
 			
 					If LibraryHP.Checked Then
-						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntlibwel3
+						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib2
 					End If
 '*******************************************************
 ' Set default printer 
