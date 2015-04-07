@@ -243,10 +243,10 @@ prntnotln2022="N202HP11x17"
 					Return = objShell.Run("cmdkey /add:wcprt03.local.niagarac.on.ca /user:" & sFullUsername & " /pass:" & sPassword, 1, True)
 				Set objNetwork = CreateObject("WScript.Network")
 			End If
-			
+
 
 ' Ryan needs to teach me how to rewrite these with cases or something taht makes more sense.
-
+' Should this be inside its own subroutine?  
 '******************************
 ' Welland Library Checkboxes
 '******************************
@@ -315,6 +315,20 @@ prntnotln2022="N202HP11x17"
 			cmd = "%COMSPEC% /c ping -n " & 1 + seconds & " 127.0.0.1>nul"
 			objShell.Run cmd,0,1
 		End Sub
+'*******************************************************
+' Delete NC printers or network printers.  NOT WORKING**
+'********************************************************
+		Sub DELPRINTERS
+			strComputer = "."
+			Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
+
+			Set colInstalledPrinters =  objWMIService.ExecQuery _
+			("Select * from Win32_Printer Where Network = TRUE")
+
+			For Each objPrinter in colInstalledPrinters
+			objPrinter.Delete_
+			Next
+		End	Sub
 
 		</SCRIPT>
 
@@ -561,7 +575,7 @@ box-shadow: 1px 1px 5px #CCC;
 
 <!-- Need to build out vbscript for delete button. --> 
 				<INPUT TYPE="BUTTON" NAME="SUBMIT" VALUE="Install Library Printer(s)" title="Click this after selecting desired printers.">
-				<INPUT TYPE="BUTTON" NAME="DELPRINTERS" VALUE="Delete Library Printers" title="Delete installed Niagara College Printers.">
+				<INPUT TYPE="BUTTON" ID="DELPRINTERS" NAME="DELPRINTERS" VALUE="Delete all network printers" title="Delete all network printers">
 			</div>	
 			
 		</div>
