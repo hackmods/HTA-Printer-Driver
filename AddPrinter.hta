@@ -35,6 +35,10 @@ wellandUNCpath="\\wcprt03.local.niagarac.on.ca\"
 Dim notlUNCpath
 notlUNCpath="\\gcprt02.local.niagarac.on.ca\"
 
+'Center the window on load
+Dim intLeft
+Dim intTop
+
 'Printer Names, Define printers for rooms here.
 ' abbreviation prnt denotes printer
 ' lib denotes room
@@ -88,9 +92,24 @@ prntnotln2022="N202HP11x17"
 'End network Test and begin loading the UI.
 '**************************************************************************************
 		Sub Window_Onload
+'**************************************************************************************************************
+' Center window on load. Depends on HTA.ini which does not work with the .exe packaging but still interesting.
+'**************************************************************************************************************
+' 			window.offscreenBuffering = True
+' 
+'
+'        		Const ForReading = 1
+'        		Set objFSO = CreateObject("Scripting.FileSystemObject")
+'       		Set objFile = objFSO.OpenTextFile("HTA.ini", ForReading)
+'        		strContents = objFile.ReadAll
+'        		objFile.Close
+
+'        		arrContents = Split(strContents, ",")
+'        		window.moveTo arrContents(0), arrContents(1)
+'****************************************************************************************************************
 ' set cursor focus on load
 			usernamebox.Focus ' Set the username box to the cursor immediately
-			HiddenInstallMessage.Style.Visibility="hidden" ' Hide the installing wait message
+			HiddenInstallMessage.Style.Visibility="hidden" ' Hide the installing wait message. This will be depricated soon.
 '***************************
 ' Hide Comboboxes On Start
 '***************************
@@ -123,6 +142,21 @@ prntnotln2022="N202HP11x17"
         		WshNetwork.SetDefaultPrinter strPrinter
         	Msgbox strprinter & " has been set as your default printer."
     	End Sub
+'*************************************************************************************************
+'Remember window position. Also depends on HTA.ini which doesn't work with .exe conversion. Pitty
+'***********************************
+' Sub Window_onBeforeUnLoad
+'        intLeft = window.screenLeft
+'        intTop = window.screenTop
+'
+'        Const ForWriting = 2
+'        Set objFSO = CreateObject("Scripting.FileSystemObject")
+'        Set objFile = objFSO.OpenTextFile("HTA.ini", ForWriting)
+'        objFile.WriteLine intLeft & "," & intTop
+'        objFile.Close
+'End Sub
+'*****************************************************************************************************
+
 '*********************************************
 'Select Campus Event
 '*********************************************
