@@ -49,7 +49,12 @@ Dim prntwellib1
 prntwellib1="LibraryColour"
 Dim prntwellib2
 prntwellib2="LibraryHP"
-
+Dim prntnotllib0
+prntnotllib0="LRCBlack"
+Dim prntnotllib1
+prntnotllib0="LRCColour"
+Dim prntnotllib2
+prntnotllib0="LRC11x17" 'This printername is wrong
 
 '***************************************************************
 'Begin network test to make sure user is on the correct domain.
@@ -85,11 +90,12 @@ prntwellib2="LibraryHP"
 '***************************
 ' Hide Rooms On Start
 '***************************
-			WELLANDlibrary.Style.Display="none" '
+			WELLANDlibrary.Style.Display="none" 
+			NOTLlibrary.Style.Display="none"
 			usernamebox.Focus ' Set the username box to the cursor immediately
 		End Sub
 '*********************************************
-'Select Campus events
+'Select Campus Event
 '*********************************************
 
 ' Show/Hide Buttons based on Room
@@ -108,19 +114,29 @@ prntwellib2="LibraryHP"
 			WELLANDrooms.Style.Display="none"
 		End If
 	End Sub
-
+'**********************************************
+'Select Room WELLAND
+'**********************************************
 	Sub selroomwel
 		If OptionRoomWEL.Value = 0 Then
 			WELLANDlibrary.Style.Display = "none"
 		ElseIf OptionRoomWEL.Value = 1 Then
 			WELLANDlibrary.Style.Display = "inline"
 		Else
-			WELLANDlibrary.Style.Display="none"
+			WELLANDlibrary.Style.Display = "none"
 		End If
 	End Sub
-	
+'***********************************************
+'Select Room NOTL
+'***********************************************
 	Sub selroomnotl
-	
+		If OptionRoomNOTL.Value = 0 Then
+			NOTLlibrary.Style.Display = "none"
+		ElseIf OptionRoomNOTL.Value = 1 Then
+			NOTLlibrary.Style.Display = "inline"
+		Else 
+			NOTLlibrary.Style.Display = "none"
+		End If
 	End Sub
 
 '**********************************************
@@ -139,14 +155,13 @@ prntwellib2="LibraryHP"
 		Sub Submit_onClick
 			sUserName = usernamebox.Value
 			sPassword = passwordbox.Value
-' Reload on failure to enter creds			
+' Reload on failure to enter creds
 			If sUserName = "" Or sPassword = "" Then
 				MsgBox "You must enter a username and password. This program will now restart.", vbExclamation, "Error"
 				Location.Reload(True)
 			Else
 				sFullUsername = "nc\" & sUserName	
-				
-
+			
 ' ********************************************************************************************************************
 ' DEPRICATED INSTALL MESSAGE
 ' This hides the window contents and shows activity. We can probably do better with a scrollbar or something here. 			
@@ -155,13 +170,22 @@ prntwellib2="LibraryHP"
 '*********************************************************************************************************************
 
 
-' Change cmdkey add value into a variable for campus awareness		
-				set objShell = CreateObject("WScript.Shell")
+' COMMAND KEY IS A PROBLEM!!!!!!!!!!! Need to check CAMPUS before sending. 
+				
+				Set objShell = CreateObject("WScript.Shell")
 					Return = objShell.Run("cmdkey /add:wcprt03.local.niagarac.on.ca /user:" & sFullUsername & " /pass:" & sPassword, 1, True)
 				Set objNetwork = CreateObject("WScript.Network")
-' More hard links to the domain that could be replaced variables throughout. 			
+			End If
+			
+
+' Ryan needs to teach me how to rewrite these with cases or something taht makes more sense.
+
+'******************************
+' Welland Library Checkboxes
+'******************************
 				If LibraryBlack.Checked = FALSE And LibraryColour.Checked = FALSE And LibraryHP.Checked = FALSE  Then
-					MsgBox "You must select at least one printer to install.  Please re-open the progam and try again.", vbExclamation, "Error"
+					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
+					Location.Reload(True)
 				Else
 					If LibraryBlack.Checked Then
 						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib0
@@ -174,6 +198,28 @@ prntwellib2="LibraryHP"
 					If LibraryHP.Checked Then
 						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib2
 					End If
+
+'********************************
+' NOTL Library Checkboxes
+'********************************
+
+				If LRCBlack.Checked = FALSE And LRCColour.Checked = FALSE And LRC11x17.Checked = FALSE  Then
+					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
+					Location.Reload(True)
+				Else
+					If LRCBlack.Checked Then
+						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotllib0
+					End If
+			
+					If LRCColour.Checked Then
+						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotllib1
+					End If
+			
+					If LRC11x17.Checked Then
+						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotllib2
+					End If
+
+
 '*******************************************************
 ' Set default printer 
 '*******************************************************
@@ -192,7 +238,7 @@ prntwellib2="LibraryHP"
 			cmd = "%COMSPEC% /c ping -n " & 1 + seconds & " 127.0.0.1>nul"
 			objShell.Run cmd,0,1
 		End Sub
-' Instead of hiding everything in the window and showing this message maybe we could hide a message at the bottom of the window and show it on top of the ui as an inverse.
+
 		</SCRIPT>
 
 		<style>
@@ -348,7 +394,7 @@ box-shadow: 1px 1px 5px #CCC;
 
     <body>
 
-		</div>
+	
 		<div id="theRest">	
 			<div>
 				<img alt="Niagara College's Library Logo" class="logo" src="NC_Button.png">
@@ -385,14 +431,22 @@ box-shadow: 1px 1px 5px #CCC;
                     <br>
 <!-- WELLAND Library Printers -->
 
-					<div ID="WELLANDlibrary" >
+					<div ID="WELLANDlibrary">
 					<br>
-						<h4 class="leftmargin1">3) Choose your Printer(s)</h4>
+						<h4 class="leftmargin1"> Choose your Printer(s)</h4>
 						<input type="checkbox" name="LibraryBlack"> Library Black Printer<br>
 						<input type="checkbox" name="LibraryColour"> Library Colour Printer<br>
 						<input type="checkbox" name="LibraryHP"> LibraryHP 11x17
 					</div>				
+<!-- NOTL Library Printers -->
 
+					<div ID="NOTLlibrary">
+					<br>
+						<h4 class="leftmargin1"> Choose your Printer(s)</h4>
+						<input type="checkbox" name="LRCBlack"> Library Black Printer<br>
+						<input type="checkbox" name="LRCColour"> Library Colour Printer<br>
+						<input type="checkbox" name="LRC11x17"> LibraryHP 11x17 <!-- This isn't right radiobox is wrong -->
+					</div>			
 				</div>
 <!-- RIGHT SIDE --> 
 
@@ -414,7 +468,7 @@ box-shadow: 1px 1px 5px #CCC;
 			<div class="center topBorder">
 			&nbsp;
 			<br>
-			<br>
+
 <!-- Need to build out vbscript for delete button. --> 
 				<INPUT TYPE="BUTTON" NAME="SUBMIT" VALUE="Install Library Printer(s)" title="Click this after selecting desired printers.">
 				<INPUT TYPE="BUTTON" NAME="DELPRINTERS" VALUE="Delete Library Printers" title="Delete installed Niagara College Printers.">
@@ -425,5 +479,6 @@ box-shadow: 1px 1px 5px #CCC;
 			<h3>
 				Installing Printer(s)..... Please be patient!
 			</h3>
+		</div>
     </body>
 </html>
