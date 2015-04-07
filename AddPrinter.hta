@@ -49,12 +49,19 @@ Dim prntwellib1
 prntwellib1="LibraryColour"
 Dim prntwellib2
 prntwellib2="LibraryHP"
+'NOTL Library Printers
 Dim prntnotllib0
 prntnotllib0="LRCBlack"
 Dim prntnotllib1
 prntnotllib0="LRCColour"
-Dim prntnotllib2
-prntnotllib0="LRC11x17" 'This printername is wrong
+'NOTL Room N202
+Dim prntnotln2020
+prntnotln2020="N202Black"
+Dim prntnotln2021
+prntnotln2021="N202Colour"
+Dim prntnotln2022
+prntnotln2022="N202HP11x17"
+
 
 '***************************************************************
 'Begin network test to make sure user is on the correct domain.
@@ -81,6 +88,8 @@ prntnotllib0="LRC11x17" 'This printername is wrong
 'End network Test and begin loading the UI.
 '**************************************************************************************
 		Sub Window_Onload
+' set cursor focus on load
+			usernamebox.Focus ' Set the username box to the cursor immediately
 			HiddenInstallMessage.Style.Visibility="hidden" ' Hide the installing wait message
 '***************************
 ' Hide Comboboxes On Start
@@ -92,8 +101,28 @@ prntnotllib0="LRC11x17" 'This printername is wrong
 '***************************
 			WELLANDlibrary.Style.Display="none" 
 			NOTLlibrary.Style.Display="none"
-			usernamebox.Focus ' Set the username box to the cursor immediately
+			NOTLN202.Style.Display="none"
+'***************************
+' For default printer list
+'***************************
+			strComputer = "."
+ 			Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
+ 			Set colPrinters = objWMIService.ExecQuery("Select * From Win32_Printer")
+       		For Each objPrinter in colPrinters
+            	strPrinter = objPrinter.Name
+            Set objOption = Document.createElement("OPTION")
+            	objOption.Text = strprinter
+            	objOption.Value = strPrinter
+           		AvailablePrinters.Add(objOption)
+        Next
 		End Sub
+
+  		Sub SetDefault
+        		strPrinter = AvailablePrinters.Value
+        	Set WshNetwork = CreateObject("Wscript.Network")
+        		WshNetwork.SetDefaultPrinter strPrinter
+        	Msgbox strprinter & " has been set as your default printer."
+    	End Sub
 '*********************************************
 'Select Campus Event
 '*********************************************
@@ -134,8 +163,12 @@ prntnotllib0="LRC11x17" 'This printername is wrong
 			NOTLlibrary.Style.Display = "none"
 		ElseIf OptionRoomNOTL.Value = 1 Then
 			NOTLlibrary.Style.Display = "inline"
+		ElseIf OptionRoomNOTL.Value = 2 Then
+			NOTLLibrary.Style.Display = "none"
+			NOTLN202.Style.Display = "inline"
 		Else 
 			NOTLlibrary.Style.Display = "none"
+			NOTLN202.Style.Display = "none"
 		End If
 	End Sub
 
@@ -198,12 +231,13 @@ prntnotllib0="LRC11x17" 'This printername is wrong
 					If LibraryHP.Checked Then
 						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib2
 					End If
+				End If
 
 '********************************
 ' NOTL Library Checkboxes
 '********************************
 
-				If LRCBlack.Checked = FALSE And LRCColour.Checked = FALSE And LRC11x17.Checked = FALSE  Then
+				If LRCBlack.Checked = FALSE And LRCColour.Checked = FALSE = FALSE  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
@@ -214,23 +248,32 @@ prntnotllib0="LRC11x17" 'This printername is wrong
 					If LRCColour.Checked Then
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotllib1
 					End If
-			
-					If LRC11x17.Checked Then
-						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotllib2
+				End If
+'********************************
+' NOTL N202 Checkboxes
+'********************************
+
+				If N202Black.Checked = FALSE And N202Colour.Checked = FALSE And N202HP11x17.Checked = FALSE  Then
+					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
+					Location.Reload(True)
+				Else
+					If N202Black.Checked Then
+						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotln2020
 					End If
-
-
+			
+					If N202Colour.Checked Then
+						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotln2021
+					End If
+			
+					If N202HP11x17.Checked Then
+						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotln2022
+					End If
+				End If
 '*******************************************************
-' Set default printer 
+' Printer Installation Success
 '*******************************************************
-					Set SelOpt = DefaultPrinter.Options(DefaultPrinter.selectedIndex)
-					objNetwork.SetDefaultPrinter "\\wcprt03.local.niagarac.on.ca\" & SelOpt.Value
 					MsgBox "Printer added successfully. Quitting Application.", vbInformation, "Success"
 					computerSleep(1)
-			
-					window.close()
-				End If
-			End If
 		End Sub
 ' Not really sure what this part of the script is doing exactly. It's waiting for the printers to install maybe?
 		Sub computerSleep(seconds)
@@ -426,6 +469,7 @@ box-shadow: 1px 1px 5px #CCC;
 						<select size="1" name="OptionRoomNOTL" onChange="selroomnotl" class="leftmargin2">
 							<option value="0">Choose Room</option>
 							<option value="1">Library</option>
+							<option value="2">N202</option>
 						</select>
 					</div>
                     <br>
@@ -433,7 +477,7 @@ box-shadow: 1px 1px 5px #CCC;
 
 					<div ID="WELLANDlibrary">
 					<br>
-						<h4 class="leftmargin1"> Choose your Printer(s)</h4>
+						<h4 class="leftmargin1"> Choose your Welland library Printer(s)</h4>
 						<input type="checkbox" name="LibraryBlack"> Library Black Printer<br>
 						<input type="checkbox" name="LibraryColour"> Library Colour Printer<br>
 						<input type="checkbox" name="LibraryHP"> LibraryHP 11x17
@@ -442,11 +486,17 @@ box-shadow: 1px 1px 5px #CCC;
 
 					<div ID="NOTLlibrary">
 					<br>
-						<h4 class="leftmargin1"> Choose your Printer(s)</h4>
+						<h4 class="leftmargin1"> Choose your NOTL library Printer(s)</h4>
 						<input type="checkbox" name="LRCBlack"> Library Black Printer<br>
 						<input type="checkbox" name="LRCColour"> Library Colour Printer<br>
-						<input type="checkbox" name="LRC11x17"> LibraryHP 11x17 <!-- This isn't right radiobox is wrong -->
 					</div>			
+					<div ID="NOTLN202">
+					<br>
+						<h4 class="leftmargin1"> Choose your NOTL room N202 Printer(s)</h4>
+						<input type="checkbox" name="N202Black">N202 Black Printer<br>
+						<input type="checkbox" name="N202Colour">N202 Colour Printer<br>
+						<input type="checkbox" name="N202HP11x17">N202 HP 11x17 Printer<br>
+					</div>		
 				</div>
 <!-- RIGHT SIDE --> 
 
@@ -456,12 +506,18 @@ box-shadow: 1px 1px 5px #CCC;
 						<P class="bold">Username: <INPUT TYPE="TEXT" class="widthTextBox" NAME="usernamebox"></P>
 						<P class="bold">Password:&nbsp; <INPUT TYPE="PASSWORD" class="widthTextBox" NAME="passwordbox"></P>
 						<br>
-						<h4>4) Choose Default Printer</h4>
-							<select size="1" name="DefaultPrinter">
-								<option value="LibraryBlack">Library Black</option>
-								<option value="LibraryColour">Library Colour</option>
-								<option value="LibraryHP">LibraryHP 11x17</option></p>
-							</select>
+						<h4>Choose Default Printer</h4>
+
+<!-- DEPRICATED NOW WE INTELLIGENTLY GATHER INSTALLED PRINTERS
+<select size="1" name="DefaultPrinter">
+<option value="LibraryBlack">Library Black</option>
+<option value="LibraryColour">Library Colour</option>
+<option value="LibraryHP">LibraryHP 11x17</option></p>
+</select> -->
+
+						<select size="5" name="AvailablePrinters"width="300" style="width: 90%"></select>
+						<br><br>
+						<input type="button" value="Set as Default" onClick="SetDefault" >
 					</div>
 				</div>
 			</div>
