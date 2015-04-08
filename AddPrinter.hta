@@ -109,7 +109,7 @@ prntnotln2022="N202HP11x17"
 '****************************************************************************************************************
 ' set cursor focus on load
 			usernamebox.Focus ' Set the username box to the cursor immediately
-			HiddenInstallMessage.Style.Visibility="hidden" ' Hide the installing wait message. This will be depricated soon.
+			HiddenInstallMessage.Style.Display="none" ' Hide the installing wait message. 
 '***************************
 ' Hide Comboboxes On Start
 '***************************
@@ -169,9 +169,12 @@ prntnotln2022="N202HP11x17"
 		ElseIf OptionCampus.Value = 1 Then
 			NOTLrooms.Style.Display = "inline"
 			WELLANDrooms.Style.Display="none"
+			WELLANDlibrary.Style.Display = "none"
 		ElseIf OptionCampus.Value = 2 Then
 			WELLANDrooms.Style.Display = "inline"
 			NOTLrooms.Style.Display = "none"
+			NOTLlibrary.Style.Display = "none"
+			NOTLN202.Style.Display = "none"
 		Else
 			NOTLrooms.Style.Display="none"
 			WELLANDrooms.Style.Display="none"
@@ -227,6 +230,7 @@ prntnotln2022="N202HP11x17"
 				MsgBox "You must enter a username and password. This program will now restart.", vbExclamation, "Error"
 				Location.Reload(True)
 			Else
+				HiddenInstallMessage.Style.Display="inline" 
 				sFullUsername = "nc\" & sUserName	
 			
 ' ********************************************************************************************************************
@@ -250,7 +254,7 @@ prntnotln2022="N202HP11x17"
 '******************************
 ' Welland Library Checkboxes
 '******************************
-				If LibraryBlack.Checked = FALSE And LibraryColour.Checked = FALSE And LibraryHP.Checked = FALSE  Then
+				If ((LibraryBlack.Checked = False) And (LibraryColour.Checked = False) And (LibraryHP.Checked = False))  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
@@ -271,7 +275,7 @@ prntnotln2022="N202HP11x17"
 ' NOTL Library Checkboxes
 '********************************
 
-				If LRCBlack.Checked = FALSE And LRCColour.Checked = FALSE = FALSE  Then
+				If ((LRCBlack.Checked = False) And (LRCColour.Checked = False))  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
@@ -287,7 +291,7 @@ prntnotln2022="N202HP11x17"
 ' NOTL N202 Checkboxes
 '********************************
 
-				If N202Black.Checked = FALSE And N202Colour.Checked = FALSE And N202HP11x17.Checked = FALSE  Then
+				If ((N202Black.Checked = False) And (N202Colour.Checked = False) And (N202HP11x17.Checked = False))  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
@@ -307,28 +311,28 @@ prntnotln2022="N202HP11x17"
 ' Printer Installation Success
 '*******************************************************
 					MsgBox "Printer added successfully. Quitting Application.", vbInformation, "Success"
-					computerSleep(1)
-		End Sub
+					'computerSleep(1)
+					End Sub
 ' Not really sure what this part of the script is doing exactly. It's waiting for the printers to install maybe?
-		Sub computerSleep(seconds)
-			Set objShell = CreateObject("Wscript.Shell")
-			cmd = "%COMSPEC% /c ping -n " & 1 + seconds & " 127.0.0.1>nul"
-			objShell.Run cmd,0,1
-		End Sub
+'		Sub computerSleep(seconds)
+'			Set objShell = CreateObject("Wscript.Shell")
+'			cmd = "%COMSPEC% /c ping -n " & 1 + seconds & " 127.0.0.1>nul"
+'			objShell.Run cmd,0,1
+'		End Sub
 '*******************************************************
 ' Delete NC printers or network printers.  NOT WORKING**
 '********************************************************
-		Sub DELPRINTERS
-			strComputer = "."
-			Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
-
-			Set colInstalledPrinters =  objWMIService.ExecQuery _
-			("Select * from Win32_Printer Where Network = TRUE")
-
-			For Each objPrinter in colInstalledPrinters
-			objPrinter.Delete_
-			Next
-		End	Sub
+	'	Sub DELPRINTERS
+	'		strComputer = "."
+	'		Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
+'
+'			Set colInstalledPrinters =  objWMIService.ExecQuery _
+'			("Select * from Win32_Printer Where Network = TRUE")
+'
+'			For Each objPrinter in colInstalledPrinters
+'			objPrinter.Delete_
+'			Next
+'		End	Sub
 
 		</SCRIPT>
 
@@ -575,13 +579,19 @@ box-shadow: 1px 1px 5px #CCC;
 
 <!-- Need to build out vbscript for delete button. --> 
 				<INPUT TYPE="BUTTON" NAME="SUBMIT" VALUE="Install Library Printer(s)" title="Click this after selecting desired printers.">
+				
+				<!-- Delete printer button not working 
 				<INPUT TYPE="BUTTON" ID="DELPRINTERS" NAME="DELPRINTERS" VALUE="Delete all network printers" title="Delete all network printers">
+				-->
+			
 			</div>	
 			
 		</div>
 		<div ID="HiddenInstallMessage" class="center toppad10">
-			<h3>
-				Installing Printer(s)..... Please be patient!
+			<h3 class="center toppad10">
+				Installing Printer(s)..... 
+				<br>
+				Please be patient.
 			</h3>
 		</div>
     </body>
