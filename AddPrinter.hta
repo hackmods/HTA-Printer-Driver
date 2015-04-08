@@ -254,6 +254,9 @@ weinstalled = ""
 '******************************
 ' Welland Library Checkboxes
 '******************************
+
+' THESE NEED OT BE DIFFERENT SUBROUTINES!!! NOT SURE HOW TO BREAK THIS UP!! 
+
 				If ((LibraryBlack.Checked = False) And (LibraryColour.Checked = False) And (LibraryHP.Checked = False))  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
@@ -295,7 +298,7 @@ weinstalled = ""
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
-					If (N202Black.Checked = True) Then
+					If N202Black.Checked = True Then
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotln2020
 					End If
 			
@@ -310,11 +313,13 @@ weinstalled = ""
 '*******************************************************
 ' Printer Installation Success
 '*******************************************************
+
 					MsgBox "Printer added successfully.", vbInformation, "Success"
-					
 					'computerSleep(1)
 					End Sub
-' Not really sure what this part of the script is doing exactly. It's waiting for the printers to install maybe?
+' Not really sure what this part of the script is doing exactly. It's waiting for the printers but it might have something
+' to do with Eriks netowrk check.
+
 '		Sub computerSleep(seconds)
 '			Set objShell = CreateObject("Wscript.Shell")
 '			cmd = "%COMSPEC% /c ping -n " & 1 + seconds & " 127.0.0.1>nul"
