@@ -65,8 +65,8 @@ Dim prntnotln2021
 prntnotln2021="N202Colour"
 Dim prntnotln2022
 prntnotln2022="N202HP11x17"
-
-
+Dim weinstalled
+weinstalled = ""
 '***************************************************************
 'Begin network test to make sure user is on the correct domain.
 '***************************************************************
@@ -212,7 +212,7 @@ prntnotln2022="N202HP11x17"
 '**********************************************
 ' Blackboard login options
 '**********************************************
-' Keycode 13 is for the enter key.
+' Submit if enter key is pressed
 		Sub passwordbox_OnKeyDown
 			With document.parentWindow.event
 				If .keycode = 13 Then
@@ -220,7 +220,7 @@ prntnotln2022="N202HP11x17"
 				End If
 			End With
 		End Sub
-
+'***********************************************
 ' Passing creds to variables to include NC\ and add printers via checkboxes
 		Sub Submit_onClick
 			sUserName = usernamebox.Value
@@ -258,15 +258,15 @@ prntnotln2022="N202HP11x17"
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
-					If LibraryBlack.Checked Then
+					If LibraryBlack.Checked = True Then
 						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib0
 					End If
 			
-					If LibraryColour.Checked Then
+					If LibraryColour.Checked = True Then
 						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib1
 					End If
 			
-					If LibraryHP.Checked Then
+					If LibraryHP.Checked = True Then
 						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib2
 					End If
 				End If
@@ -279,11 +279,11 @@ prntnotln2022="N202HP11x17"
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
-					If LRCBlack.Checked Then
+					If LRCBlack.Checked = True Then
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotllib0
 					End If
 			
-					If LRCColour.Checked Then
+					If LRCColour.Checked = True Then
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotllib1
 					End If
 				End If
@@ -295,22 +295,23 @@ prntnotln2022="N202HP11x17"
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
-					If N202Black.Checked Then
+					If (N202Black.Checked = True) Then
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotln2020
 					End If
 			
-					If N202Colour.Checked Then
+					If N202Colour.Checked = True Then
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotln2021
 					End If
 			
-					If N202HP11x17.Checked Then
+					If N202HP11x17.Checked = True Then
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotln2022
 					End If
 				End If
 '*******************************************************
 ' Printer Installation Success
 '*******************************************************
-					MsgBox "Printer added successfully. Quitting Application.", vbInformation, "Success"
+					MsgBox "Printer added successfully.", vbInformation, "Success"
+					
 					'computerSleep(1)
 					End Sub
 ' Not really sure what this part of the script is doing exactly. It's waiting for the printers to install maybe?
