@@ -241,7 +241,7 @@ weinstalled = ""
 '*********************************************************************************************************************
 
 
-' COMMAND KEY IS A PROBLEM!!!!!!!!!!! Need to check CAMPUS before sending. 
+' COMMAND KEY IS A PROBLEM!!!!!!!!!!! Need to check CAMPUS before sending and assign with a variable instead. 
 				
 				Set objShell = CreateObject("WScript.Shell")
 					Return = objShell.Run("cmdkey /add:wcprt03.local.niagarac.on.ca /user:" & sFullUsername & " /pass:" & sPassword, 1, True)
@@ -255,7 +255,7 @@ weinstalled = ""
 ' Welland Library Checkboxes
 '******************************
 
-' THESE NEED OT BE DIFFERENT SUBROUTINES!!! NOT SURE HOW TO BREAK THIS UP!! 
+' THESE NEED OT BE DIFFERENT SUBROUTINES for each group of checkboxes!!! NOT SURE HOW TO BREAK THIS UP!! 
 
 				If ((LibraryBlack.Checked = False) And (LibraryColour.Checked = False) And (LibraryHP.Checked = False))  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
