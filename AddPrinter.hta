@@ -6,8 +6,6 @@
         
         <meta name="description" content="Add Library Printers">
 
-
-
 	<SCRIPT Language="VBScript" type="text/vbscript" id="WindowResize">
 		Const WINDOW_WIDTH = 700
 		Const WINDOW_HEIGHT = 600
@@ -35,6 +33,9 @@ wellandUNCpath="\\wcprt03.local.niagarac.on.ca\"
 Dim notlUNCpath
 notlUNCpath="\\gcprt02.local.niagarac.on.ca\"
 
+Dim howmanyprinters
+howmanyprinters=0
+
 'Center the window on load
 Dim intLeft
 Dim intTop
@@ -53,11 +54,16 @@ Dim prntwellib1
 prntwellib1="LibraryColour"
 Dim prntwellib2
 prntwellib2="LibraryHP"
+' Welland SE182 Printers
+Dim prntwelse1820
+prntwelse1820 = "SE182Black"
+Dim prntwelse1821
+prntwelse1821 = "SE182Colour"
 'NOTL Library Printers
 Dim prntnotllib0
 prntnotllib0="LRCBlack"
 Dim prntnotllib1
-prntnotllib0="LRCColour"
+prntnotllib1="LRCColour"
 'NOTL Room N202
 Dim prntnotln2020
 prntnotln2020="N202Black"
@@ -65,8 +71,7 @@ Dim prntnotln2021
 prntnotln2021="N202Colour"
 Dim prntnotln2022
 prntnotln2022="N202HP11x17"
-Dim weinstalled
-weinstalled = ""
+
 '***************************************************************
 'Begin network test to make sure user is on the correct domain.
 '***************************************************************
@@ -96,18 +101,15 @@ weinstalled = ""
 ' Center window on load. Depends on HTA.ini which does not work with the .exe packaging but still interesting.
 '**************************************************************************************************************
 ' 			window.offscreenBuffering = True
-' 
-'
 '        		Const ForReading = 1
 '        		Set objFSO = CreateObject("Scripting.FileSystemObject")
 '       		Set objFile = objFSO.OpenTextFile("HTA.ini", ForReading)
 '        		strContents = objFile.ReadAll
 '        		objFile.Close
-
 '        		arrContents = Split(strContents, ",")
 '        		window.moveTo arrContents(0), arrContents(1)
 '****************************************************************************************************************
-' set cursor focus on load
+' Set Cursor Focus on load AODA
 			usernamebox.Focus ' Set the username box to the cursor immediately
 			HiddenInstallMessage.Style.Display="none" ' Hide the installing wait message. 
 '***************************
@@ -118,27 +120,30 @@ weinstalled = ""
 '***************************
 ' Hide Rooms On Start
 '***************************
-			WELLANDlibrary.Style.Display="none" 
+			WELLANDlibrary.Style.Display="none"
+			WELLANDse182.Style.Display="none" 
 			NOTLlibrary.Style.Display="none"
 			NOTLN202.Style.Display="none"
 '***************************
 ' For default printer list
 '***************************
-			strComputer = "."
- 			Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
+ 			Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
  			Set colPrinters = objWMIService.ExecQuery("Select * From Win32_Printer")
+ 			howmanyprinters = 0
        		For Each objPrinter in colPrinters
             	strPrinter = objPrinter.Name
             Set objOption = Document.createElement("OPTION")
             	objOption.Text = strprinter
             	objOption.Value = strPrinter
            		AvailablePrinters.Add(objOption)
+ ' Check how many printers are installed to see if blackboard authorization worked. If more printers exist after script then it worked.
+           	howmanyprinters = howmanyprinters + 1
         Next
 		End Sub
 
   		Sub SetDefault
         		strPrinter = AvailablePrinters.Value
-        	Set WshNetwork = CreateObject("Wscript.Network")
+				Set WshNetwork = CreateObject("Wscript.Network")
         		WshNetwork.SetDefaultPrinter strPrinter
         	Msgbox strprinter & " has been set as your default printer."
     	End Sub
@@ -162,14 +167,20 @@ weinstalled = ""
 '*********************************************
 
 ' Show/Hide Buttons based on Room
+' Server paths are based on campus selection throughout this document. example gcprt02.local etc.
 	Sub selcampus
 		If OptionCampus.Value = 0 Then
 			NOTLrooms.Style.Display = "none"
 			WELLANDrooms.Style.Display = "none"
+			WELLANDse182.Style.Display = "none"
+			WELLANDlibrary.Style.Display = "none"
+			NOTLN202.Style.Display = "none"
+			NOTLlibrary.Style.Display = "none"
 		ElseIf OptionCampus.Value = 1 Then
 			NOTLrooms.Style.Display = "inline"
 			WELLANDrooms.Style.Display="none"
 			WELLANDlibrary.Style.Display = "none"
+			WELLANDse182.Style.Display = "none"
 		ElseIf OptionCampus.Value = 2 Then
 			WELLANDrooms.Style.Display = "inline"
 			NOTLrooms.Style.Display = "none"
@@ -186,10 +197,17 @@ weinstalled = ""
 	Sub selroomwel
 		If OptionRoomWEL.Value = 0 Then
 			WELLANDlibrary.Style.Display = "none"
+			WELLANDSE182.Style.Display = "none"
 		ElseIf OptionRoomWEL.Value = 1 Then
 			WELLANDlibrary.Style.Display = "inline"
+			WELLANDSE182.Style.Display = "none"
+			'walked away while working on this line to add SE182
+		ElseIf OptionRoomWEL.Value = 2 Then	
+			WELLANDlibrary.Style.Display = "none"
+			WELLANDSE182.Style.Display = "inline"
 		Else
 			WELLANDlibrary.Style.Display = "none"
+			WELLANDSE182.Style.Display = "none"
 		End If
 	End Sub
 '***********************************************
@@ -229,23 +247,26 @@ weinstalled = ""
 			If sUserName = "" Or sPassword = "" Then
 				MsgBox "You must enter a username and password. This program will now restart.", vbExclamation, "Error"
 				Location.Reload(True)
+				Exit Sub
 			Else
+				' Start showing installation message
 				HiddenInstallMessage.Style.Display="inline" 
 				sFullUsername = "nc\" & sUserName	
-			
-' ********************************************************************************************************************
-' DEPRICATED INSTALL MESSAGE
-' This hides the window contents and shows activity. We can probably do better with a scrollbar or something here. 			
-'				theRest.Style.Visibility="hidden"
-'				Install.Style.Visibility="visible"
-'*********************************************************************************************************************
-
-
-' COMMAND KEY IS A PROBLEM!!!!!!!!!!! Need to check CAMPUS before sending and assign with a variable instead. 
-				
+				' Determine which campus path to use based on user selection
+				If OptionCampus.Value = 1 Then
+					thePrintServer = "gcprt02.local.niagarac.on.ca"
+				ElseIf OptionCampus.Value = 2 Then
+					thePrintServer = "wcprt03.local.niagarac.on.ca"
+				Else
+					MsgBox "You must pick a campus."
+					Location.Reload(True)
+					Exit Sub
+				End If
 				Set objShell = CreateObject("WScript.Shell")
-					Return = objShell.Run("cmdkey /add:wcprt03.local.niagarac.on.ca /user:" & sFullUsername & " /pass:" & sPassword, 1, True)
+					Return = objShell.Run("cmdkey /add:" & thePrintServer & " /user:" & sFullUsername & " /pass:" & sPassword, 1, True)
 				Set objNetwork = CreateObject("WScript.Network")
+				' Remove installing printers message
+				HiddenInstallMessage.Style.Display="none"
 			End If
 
 
@@ -255,8 +276,8 @@ weinstalled = ""
 ' Welland Library Checkboxes
 '******************************
 
-' THESE NEED OT BE DIFFERENT SUBROUTINES for each group of checkboxes!!! NOT SURE HOW TO BREAK THIS UP!! 
 
+If WELLANDlibrary.Style.Display = "inline" Then
 				If ((LibraryBlack.Checked = False) And (LibraryColour.Checked = False) And (LibraryHP.Checked = False))  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
@@ -273,27 +294,50 @@ weinstalled = ""
 						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwellib2
 					End If
 				End If
+End If
+
+'********************************
+' SE182 Checkboxes
+'********************************
+
+If WELLANDse182.Style.Display = "inline" Then
+				If ((SE182Black.Checked = False) And (SE182Colour.Checked = False))  Then
+					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
+					Location.Reload(True)
+				Else
+					If SE182Black.Checked = True Then
+						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwelse1820
+					End If
+			
+					If SE182Colour.Checked = True Then
+						objNetwork.AddWindowsPrinterConnection wellandUNCpath & prntwelse1821
+					End If
+				End If
+End If
 
 '********************************
 ' NOTL Library Checkboxes
 '********************************
-
+If NOTLlibrary.Style.Display = "inline" Then
 				If ((LRCBlack.Checked = False) And (LRCColour.Checked = False))  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
+	
 					If LRCBlack.Checked = True Then
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotllib0
 					End If
 			
 					If LRCColour.Checked = True Then
+
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotllib1
 					End If
 				End If
+End If
 '********************************
 ' NOTL N202 Checkboxes
 '********************************
-
+If NOTLN202.Style.Display = "inline" Then
 				If ((N202Black.Checked = False) And (N202Colour.Checked = False) And (N202HP11x17.Checked = False))  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
@@ -310,35 +354,20 @@ weinstalled = ""
 						objNetwork.AddWindowsPrinterConnection notlUNCpath & prntnotln2022
 					End If
 				End If
+End If
+
 '*******************************************************
 ' Printer Installation Success
 '*******************************************************
 
 					MsgBox "Printer added successfully.", vbInformation, "Success"
-					'computerSleep(1)
-					End Sub
-' Not really sure what this part of the script is doing exactly. It's waiting for the printers but it might have something
-' to do with Eriks netowrk check.
+					Location.Reload(True)
+End Sub
 
-'		Sub computerSleep(seconds)
-'			Set objShell = CreateObject("Wscript.Shell")
-'			cmd = "%COMSPEC% /c ping -n " & 1 + seconds & " 127.0.0.1>nul"
-'			objShell.Run cmd,0,1
-'		End Sub
-'*******************************************************
-' Delete NC printers or network printers.  NOT WORKING**
-'********************************************************
-	'	Sub DELPRINTERS
-	'		strComputer = "."
-	'		Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
-'
-'			Set colInstalledPrinters =  objWMIService.ExecQuery _
-'			("Select * from Win32_Printer Where Network = TRUE")
-'
-'			For Each objPrinter in colInstalledPrinters
-'			objPrinter.Delete_
-'			Next
-'		End	Sub
+Sub RunRefresh
+    Location.Reload(True)
+End Sub
+
 
 		</SCRIPT>
 
@@ -494,8 +523,6 @@ box-shadow: 1px 1px 5px #CCC;
     </head>
 
     <body>
-
-	
 		<div id="theRest">	
 			<div>
 				<img alt="Niagara College's Library Logo" class="logo" src="NC_Button.png">
@@ -520,6 +547,7 @@ box-shadow: 1px 1px 5px #CCC;
 						<select size="1" name="OptionRoomWEL" onChange="selroomwel" class="leftmargin2">
 							<option value="0">Choose Room</option>
 							<option value="1">Library</option>
+							<option value="2">SE182 Open Access </option>
 						</select>
 					</div>
 					<div ID="NOTLrooms" class="leftmargin1">
@@ -540,6 +568,14 @@ box-shadow: 1px 1px 5px #CCC;
 						<input type="checkbox" name="LibraryColour"> Library Colour Printer<br>
 						<input type="checkbox" name="LibraryHP"> LibraryHP 11x17
 					</div>				
+<!-- WELLAND SE182 Printers --> 
+
+					<div ID="WELLANDse182">
+					<br>
+						<h4 class="leftmargin1"> Choose your Welland library Printer(s)</h4>
+						<input type="checkbox" name="SE182Black"> SE182 Black Printer<br>
+						<input type="checkbox" name="SE182Colour"> SE182 Colour Printer<br>
+					</div>		
 <!-- NOTL Library Printers -->
 
 					<div ID="NOTLlibrary">
@@ -547,7 +583,8 @@ box-shadow: 1px 1px 5px #CCC;
 						<h4 class="leftmargin1"> Choose your NOTL library Printer(s)</h4>
 						<input type="checkbox" name="LRCBlack"> Library Black Printer<br>
 						<input type="checkbox" name="LRCColour"> Library Colour Printer<br>
-					</div>			
+					</div>	
+<!-- NOTL N202 Printers -->		
 					<div ID="NOTLN202">
 					<br>
 						<h4 class="leftmargin1"> Choose your NOTL room N202 Printer(s)</h4>
@@ -559,23 +596,20 @@ box-shadow: 1px 1px 5px #CCC;
 <!-- RIGHT SIDE --> 
 
 				<div>
+<!-- Blackboard User Input -->
 					<div class="leftpad52">
 						<h4>3) Enter your <span class="bold">BlackBoard</span> login:</h4>	
 						<P class="bold">Username: <INPUT TYPE="TEXT" class="widthTextBox" NAME="usernamebox"></P>
 						<P class="bold">Password:&nbsp; <INPUT TYPE="PASSWORD" class="widthTextBox" NAME="passwordbox"></P>
 						<br>
+<!-- Defualt Printer User Input -->
 						<h4>Choose Default Printer</h4>
-
-<!-- DEPRICATED NOW WE INTELLIGENTLY GATHER INSTALLED PRINTERS
-<select size="1" name="DefaultPrinter">
-<option value="LibraryBlack">Library Black</option>
-<option value="LibraryColour">Library Colour</option>
-<option value="LibraryHP">LibraryHP 11x17</option></p>
-</select> -->
-
 						<select size="5" name="AvailablePrinters"width="300" style="width: 90%"></select>
 						<br><br>
-						<input type="button" value="Set as Default" onClick="SetDefault" >
+						<div class="leftpad2">
+							<input type="button" value="Set as Default" onClick="SetDefault" >
+							<input type="button" value="Refresh" onClick="RunRefresh" >
+						</div>
 					</div>
 				</div>
 			</div>
@@ -583,8 +617,8 @@ box-shadow: 1px 1px 5px #CCC;
 			&nbsp;
 			<br>
 
-<!-- Need to build out vbscript for delete button. --> 
-				<INPUT TYPE="BUTTON" NAME="SUBMIT" VALUE="Install Library Printer(s)" title="Click this after selecting desired printers.">
+<!-- Install Selected Printer User Input --> 
+				<INPUT TYPE="BUTTON" NAME="SUBMIT" VALUE="Install Printer(s)" title="Click this after selecting desired printers.">
 				
 				<!-- Delete printer button not working 
 				<INPUT TYPE="BUTTON" ID="DELPRINTERS" NAME="DELPRINTERS" VALUE="Delete all network printers" title="Delete all network printers">
@@ -593,6 +627,7 @@ box-shadow: 1px 1px 5px #CCC;
 			</div>	
 			
 		</div>
+<!-- Installing Printers Message -->
 		<div ID="HiddenInstallMessage" class="center toppad10">
 			<h3 class="center toppad10">
 				Installing Printer(s)..... 
