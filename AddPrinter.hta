@@ -163,9 +163,14 @@ End Function
 
   		Sub SetDefault
         		strPrinter = AvailablePrinters.Value
-				Set WshNetwork = CreateObject("Wscript.Network")
-        		WshNetwork.SetDefaultPrinter strPrinter
-        	Msgbox strprinter & " has been set as your default printer."
+        		If strPrinter = "" Then
+        			Msgbox " You must sellect a printer as your default printer."
+        		Else
+					Set WshNetwork = CreateObject("Wscript.Network")
+        			WshNetwork.SetDefaultPrinter strPrinter
+        			Msgbox strprinter & " has been set as your default printer."
+        		End If
+        
     	End Sub
 '*************************************************************************************************
 'Remember window position. Also depends on HTA.ini which doesn't work with .exe conversion. Pitty
@@ -270,6 +275,8 @@ End Function
 				Location.Reload(True)
 				Exit Sub
 			Else
+			
+				
 				' Start showing installation message
 				HiddenInstallMessage.Style.Display="inline" 
 				sFullUsername = "nc\" & sUserName	
@@ -283,11 +290,26 @@ End Function
 					Location.Reload(True)
 					Exit Sub
 				End If
+				
+				On Error Resume Next
+				Err.Clear
+				
 				Set objShell = CreateObject("WScript.Shell")
 					Return = objShell.Run("cmdkey /add:" & thePrintServer & " /user:" & sFullUsername & " /pass:" & sPassword, 1, True)
 				Set objNetwork = CreateObject("WScript.Network")
 				' Remove installing printers message
 				HiddenInstallMessage.Style.Display="none"
+				
+				If Err.Number <> 0 Then
+    			WScript.Echo "Error: " & Err.Number
+    			WScript.Echo "Error (Hex): " & Hex(Err.Number)
+    			WScript.Echo "Source: " &  Err.Source
+    			WScript.Echo "Description: " &  Err.Description
+				MsgBox "Incorrect Login. You must log in with your NC credentials", vbExclamation, "Error"	
+				Location.Reload(True)		
+    			Err.Clear
+				End If
+				
 			End If
 
 
