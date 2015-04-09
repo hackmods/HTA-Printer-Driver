@@ -72,6 +72,26 @@ prntnotln2021="N202Colour"
 Dim prntnotln2022
 prntnotln2022="N202HP11x17"
 
+
+'**************************************************************
+' Lets find out if the print spooler is even working 
+'**************************************************************
+
+Function testspooler()
+	strComputer = "."
+	Set objWMIService = GetObject("winmgmts:" _
+   	 & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+
+	Set colRunningServices =  objWMIService.ExecQuery _
+    	("Select * from Win32_Service Where Name = 'Spooler'")
+
+	For Each objService in colRunningServices 
+    	Wscript.Echo objService.DisplayName & " -- " & objService.State
+	Next
+End Function
+
+
+
 '***************************************************************
 'Begin network test to make sure user is on the correct domain.
 '***************************************************************
@@ -217,6 +237,7 @@ prntnotln2022="N202HP11x17"
 		If OptionRoomNOTL.Value = 0 Then
 			NOTLlibrary.Style.Display = "none"
 		ElseIf OptionRoomNOTL.Value = 1 Then
+		    NOTLN202.Style.Display = "none"
 			NOTLlibrary.Style.Display = "inline"
 		ElseIf OptionRoomNOTL.Value = 2 Then
 			NOTLLibrary.Style.Display = "none"
@@ -429,9 +450,7 @@ table {
 
 /* FORM STYLE */
 
-		.widthTextBox {
-			width: 40%;
-			}
+
 select
 {
 width: 35%;
@@ -459,8 +478,10 @@ box-shadow: 1px 1px 5px #CCC;
 			}
 		h4 {
 			font-family:"Georgia,serif";
-			letter-spacing: 1px;
-			padding-bottom: 7px;
+			font-size: 120%;
+			letter-spacing: 5%;
+			padding-bottom: 2%;
+			padding-right: 2%
 			}
 
 		.center {text-align:center;}
@@ -516,7 +537,16 @@ box-shadow: 1px 1px 5px #CCC;
 		.toppad10 {
 			padding-top: 1%
 		}
-		
+		.chkbox {
+			margin-left:2%; 
+			margin-right:5%;
+			margin-top: 2%;
+		}
+
+		.bottommargin {
+			bottom-margin:3%;
+			}
+
 		</style>
 
 	
@@ -564,33 +594,33 @@ box-shadow: 1px 1px 5px #CCC;
 					<div ID="WELLANDlibrary">
 					<br>
 						<h4 class="leftmargin1"> Choose your Welland library Printer(s)</h4>
-						<input type="checkbox" name="LibraryBlack"> Library Black Printer<br>
-						<input type="checkbox" name="LibraryColour"> Library Colour Printer<br>
-						<input type="checkbox" name="LibraryHP"> LibraryHP 11x17
+						<input type="checkbox" name="LibraryBlack" class="chkbox"> Library Black Printer<br>
+						<input type="checkbox" name="LibraryColour" class="chkbox"> Library Colour Printer<br>
+						<input type="checkbox" name="LibraryHP" class="chkbox"> LibraryHP 11x17
 					</div>				
 <!-- WELLAND SE182 Printers --> 
 
 					<div ID="WELLANDse182">
 					<br>
-						<h4 class="leftmargin1"> Choose your Welland library Printer(s)</h4>
-						<input type="checkbox" name="SE182Black"> SE182 Black Printer<br>
-						<input type="checkbox" name="SE182Colour"> SE182 Colour Printer<br>
+						<h4 class="leftmargin1"> Choose your Welland SE182 Printer(s)</h4>
+						<input type="checkbox" name="SE182Black" class="chkbox"> SE182 Black Printer<br>
+						<input type="checkbox" name="SE182Colour" class="chkbox"> SE182 Colour Printer<br>
 					</div>		
 <!-- NOTL Library Printers -->
 
 					<div ID="NOTLlibrary">
 					<br>
 						<h4 class="leftmargin1"> Choose your NOTL library Printer(s)</h4>
-						<input type="checkbox" name="LRCBlack"> Library Black Printer<br>
-						<input type="checkbox" name="LRCColour"> Library Colour Printer<br>
+						<input type="checkbox" name="LRCBlack" class="chkbox"> Library Black Printer<br>
+						<input type="checkbox" name="LRCColour" class="chkbox"> Library Colour Printer<br>
 					</div>	
 <!-- NOTL N202 Printers -->		
 					<div ID="NOTLN202">
 					<br>
 						<h4 class="leftmargin1"> Choose your NOTL room N202 Printer(s)</h4>
-						<input type="checkbox" name="N202Black">N202 Black Printer<br>
-						<input type="checkbox" name="N202Colour">N202 Colour Printer<br>
-						<input type="checkbox" name="N202HP11x17">N202 HP 11x17 Printer<br>
+						<input type="checkbox" name="N202Black" class="chkbox">N202 Black Printer<br>
+						<input type="checkbox" name="N202Colour" class="chkbox">N202 Colour Printer<br>
+						<input type="checkbox" name="N202HP11x17" class="chkbox">N202 HP 11x17 Printer<br>
 					</div>		
 				</div>
 <!-- RIGHT SIDE --> 
@@ -598,13 +628,26 @@ box-shadow: 1px 1px 5px #CCC;
 				<div>
 <!-- Blackboard User Input -->
 					<div class="leftpad52">
-						<h4>3) Enter your <span class="bold">BlackBoard</span> login:</h4>	
-						<P class="bold">Username: <INPUT TYPE="TEXT" class="widthTextBox" NAME="usernamebox"></P>
-						<P class="bold">Password:&nbsp; <INPUT TYPE="PASSWORD" class="widthTextBox" NAME="passwordbox"></P>
+						<h4>3) Enter your <span class="bold">Niagara Blackboard</span> login:</h4>	
+						<P class="bold toppad10 rightmargin2">
+						
+
+<table>
+
+  <tr>
+    <td style="padding-right:2%;">Username: </td>
+    <td style=" "><INPUT TYPE="TEXT" class="txtbox" NAME="usernamebox"></td>
+  </tr>
+  <tr>
+    <td >Password: </td>
+    <td style=" padding-top:2%;"><INPUT TYPE="PASSWORD" class="txtbox" NAME="passwordbox"></td>
+  </tr>
+</table>
+
 						<br>
 <!-- Defualt Printer User Input -->
 						<h4>Choose Default Printer</h4>
-						<select size="5" name="AvailablePrinters"width="300" style="width: 90%"></select>
+						<select size="5" name="AvailablePrinters"width="300" style="width: 90%;"></select>
 						<br><br>
 						<div class="leftpad2">
 							<input type="button" value="Set as Default" onClick="SetDefault" >
@@ -613,17 +656,14 @@ box-shadow: 1px 1px 5px #CCC;
 					</div>
 				</div>
 			</div>
-			<div class="center topBorder">
+			<div class="center topBorder bottommargin">
 			&nbsp;
 			<br>
 
 <!-- Install Selected Printer User Input --> 
 				<INPUT TYPE="BUTTON" NAME="SUBMIT" VALUE="Install Printer(s)" title="Click this after selecting desired printers.">
-				
-				<!-- Delete printer button not working 
-				<INPUT TYPE="BUTTON" ID="DELPRINTERS" NAME="DELPRINTERS" VALUE="Delete all network printers" title="Delete all network printers">
-				-->
-			
+								&nbsp;
+			<br>		
 			</div>	
 			
 		</div>
