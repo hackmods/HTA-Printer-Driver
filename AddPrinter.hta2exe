@@ -1,0 +1,15 @@
+<convert2exe>
+    <path>C:\Users\bgillap\Documents\GitHub\HTA-Printer-Driver\AddPrinter.exe</path>
+    <uacLevel>asInvoker</uacLevel>
+    <dependencies>
+        <dependency>addprinter.ico</dependency>
+        <dependency>NC_Button.png</dependency>
+    </dependencies>
+    <build>32bit</build>
+    <details>
+        <version>1.0.0.0</version>
+        <description>A small program for adding campus printers built in vbscript and HTA.</description>
+        <productName>NC Add Printer Wizard</productName>
+        <copyright>Copyright (C) 2015</copyright>
+    </details>
+</convert2exe>
