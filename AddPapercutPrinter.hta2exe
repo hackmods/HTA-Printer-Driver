@@ -1,0 +1,15 @@
+<convert2exe>
+    <path>C:\Users\tech600\Desktop\HTA-Printer-Driver\AddPapercutPrinter.exe</path>
+    <uacLevel>asInvoker</uacLevel>
+    <dependencies>
+        <dependency>addprinter.ico</dependency>
+        <dependency>NC_Button.png</dependency>
+    </dependencies>
+    <build>32bit</build>
+    <details>
+        <version>2.0.1.0</version>
+        <description>A utility to install printer queues for Niagara College students.</description>
+        <productName>NC Print Wizard</productName>
+        <copyright>Copyright NC ITS (C) 2015</copyright>
+    </details>
+</convert2exe>
