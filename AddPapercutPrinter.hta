@@ -112,12 +112,12 @@ Dim intTop
 ' Should be a variable array but I yet to implement See http://www.w3schools.com/vbscript/vbscript_variables.asp
 
 'PaperCut Printers
-Dim prtBW
-prtPCBlack="BlackAndWhite"
-Dim prtColour
-prtPCColour="Colour"
-Dim prt11X17
-prtPC11x17="11X17"
+
+'Variable array
+dim prt(2)
+prt(0) = "BlackAndWhite"
+prt(1) = "Colour"
+prt(2) = "11X17"
 
 '**************************************************************
 ' Lets find out if the print spooler is even working 
@@ -254,24 +254,24 @@ End Function
 ' PaperCut Printer Checkboxes
 '******************************
 
-				If ((LibraryBlack.Checked = False) And (LibraryColour.Checked = False) And (LibraryHP.Checked = False))  Then
+				If ((Black.Checked = False) And (Colour.Checked = False) And (Legal.Checked = False))  Then
 					MsgBox "You must select at least one printer to install. The program will now restart.", vbExclamation, "Error"
 					Location.Reload(True)
 				Else
-					If LibraryBlack.Checked = True Then
-						objNetwork.AddWindowsPrinterConnection papercutUNCpath & prtPCBlack
+					If Black.Checked = True Then
+						objNetwork.AddWindowsPrinterConnection papercutUNCpath & prt(0)
 					End If
 			
-					If LibraryColour.Checked = True Then
-						objNetwork.AddWindowsPrinterConnection papercutUNCpath & prtPCColour
+					If Colour.Checked = True Then
+						objNetwork.AddWindowsPrinterConnection papercutUNCpath & prt(1)
 					End If
 			
-					If LibraryHP.Checked = True Then
-						objNetwork.AddWindowsPrinterConnection papercutUNCpath & prtPC11x17
+					If Legal.Checked = True Then
+						objNetwork.AddWindowsPrinterConnection papercutUNCpath & prt(2)
 					End If
 				End If
 
-
+ 
 '*******************************************************
 ' Printer Installation Success
 '*******************************************************
@@ -454,9 +454,9 @@ box-shadow: 1px 1px 5px #CCC;
 <!-- PaperCut Printers -->
 				<div ID="PCprinters">
 						<h4 class="leftmargin"> Choose your Print Queue</h4>
-						<input type="checkbox" name="LibraryBlack" class="chkbox">Black and White<br>
-						<input type="checkbox" name="LibraryColour" class="chkbox">Color<br>
-						<input type="checkbox" name="LibraryHP" class="chkbox">11x17	
+						<input type="checkbox" name="Black" class="chkbox">Black and White<br>
+						<input type="checkbox" name="Colour" class="chkbox">Color<br>
+						<input type="checkbox" name="Legal" class="chkbox">11x17	
 				</div>
 <!-- Blackboard User Input -->
 <br>
